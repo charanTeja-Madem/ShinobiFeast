@@ -37,8 +37,8 @@ commonApi.post('/login',async(req,res)=>{
         let {token,userCred}=await authenticate({email,password})
         res.cookie("token",token,{
             httpOnly:true,
-            secure:false,
-            sameSite:'lax'
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
         })
         let user=userCred.toObject()
         delete user.password
@@ -55,8 +55,8 @@ commonApi.post('/login',async(req,res)=>{
 commonApi.post('/logout',(req,res)=>{
     res.clearCookie("token",{
         httpOnly:true,
-        secure:false,
-        sameSite:'lax'
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
     })
     res.json({
         message:"Logout successful"

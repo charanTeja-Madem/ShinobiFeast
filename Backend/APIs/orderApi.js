@@ -15,4 +15,6 @@ orderApi.get("/myorders", verifyToken, checkUser, getMyOrders);
 orderApi.get("/vendor", verifyToken, checkVendor, getVendorOrders);
 //Single centralized status update (for user, vendor, delivery)
 orderApi.put("/:id/status",verifyToken,updateOrderStatus);
+// Cancel order (user or vendor can cancel)
+orderApi.delete("/:id/cancel", verifyToken, cancelOrder);
 export default orderApi;

@@ -45,6 +45,16 @@ const restaurantSchema = new Schema({
         type: String
     },
 
+        offer: {
+            type: String,
+            default: ""
+        },
+
+        isOpen: {
+            type: Boolean,
+            default: true
+        },
+
     rating: {
         type: Number,
         default: 0

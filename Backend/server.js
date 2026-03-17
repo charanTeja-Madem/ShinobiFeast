@@ -29,8 +29,8 @@ app.post(
 );
 app.use(exp.json());
 app.use(cors({
-  origin: "http://localhost:5173", // Frontend URL
-  credentials: true // Allow cookies
+  origin: process.env.CLIENT_URL || "http://localhost:5173",
+  credentials: true
 }));
 app.use(cookieParser());
 

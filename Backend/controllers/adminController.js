@@ -1,6 +1,8 @@
 import User from "../models/userModel.js";
 import { Payment } from "../models/paymentModel.js";
 import { Order } from "../models/orderModel.js";
+import { DeliveryPartner } from "../models/deliveryPartnerModel.js";
+import Restaurant from "../models/restaurantModel.js";
 export const getAllUsers = async (req, res) => {
   try {
     const users = await User.find().select("-password");
@@ -72,6 +74,40 @@ export const getPlatformRevenue = async (req, res) => {
       0
     );
     res.json({ totalRevenue: totalCommission, totalCommission });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+export const getDeliveryPartners = async (req, res) => {
+  try {
+    const partners = await DeliveryPartner.find()
+      .populate("user", "name email phone isBlocked")
+      .sort({ createdAt: -1 });
+    res.json({ message: "Delivery partners fetched successfully", partners });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+export const getAllRestaurants = async (req, res) => {
+  try {
+    const restaurants = await Restaurant.find()
+      .populate("owner", "name email")
+      .sort({ createdAt: -1 });
+    res.json({ message: "Restaurants fetched successfully", restaurants });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+export const toggleRestaurantOpen = async (req, res) => {
+  try {
+    const restaurant = await Restaurant.findById(req.params.id);
+    if (!restaurant) return res.status(404).json({ message: "Restaurant not found" });
+    restaurant.isOpen = !restaurant.isOpen;
+    await restaurant.save();
+    res.json({ message: `Restaurant ${restaurant.isOpen ? "opened" : "closed"}`, restaurant });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

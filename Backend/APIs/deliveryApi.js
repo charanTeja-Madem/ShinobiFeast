@@ -4,6 +4,7 @@ import { checkDeliveryPartner } from "../middlewares/checkDeliveryPartner.js";
 import { checkPayment } from "../middlewares/checkPayment.js";
 import { updateDeliveryStatus } from "../controllers/orderController.js";
 import { markOutForDelivery,markDelivered,createDeliveryProfile,getAvailableOrders,acceptOrder,getMyDeliveries,getDeliveryHistory,verifyOtp} from "../controllers/deliveryController.js";
+import { getMyProfile, updateDeliveryProfile } from "../controllers/deliveryController.js";
 const deliveryApi = exp.Router();
 deliveryApi.post(
   "/create-profile",
@@ -11,6 +12,8 @@ deliveryApi.post(
   checkDeliveryPartner,
   createDeliveryProfile
 );
+deliveryApi.get("/profile", verifyToken, checkDeliveryPartner, getMyProfile);
+deliveryApi.put("/profile", verifyToken, checkDeliveryPartner, updateDeliveryProfile);
 deliveryApi.get(
   "/available-orders",
   verifyToken,

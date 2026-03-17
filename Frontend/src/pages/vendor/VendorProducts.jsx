@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { api } from "../../utils/api";
 
-const EMPTY_FORM = { name: "", description: "", price: "", category: "", restaurant: "" };
+const EMPTY_FORM = { name: "", description: "", price: "", category: "", restaurant: "", isVeg: false };
 
 const FOOD_CATEGORIES = [
   "Biryani", "Chicken", "Mutton", "Beef", "Pork", "Seafood",
@@ -77,7 +77,7 @@ function VendorProducts() {
   };
 
   const handleEdit = (p) => {
-    setForm({ name: p.name, description: p.description, price: p.price, category: p.category, restaurant: p.restaurant?._id || p.restaurant });
+     setForm({ name: p.name, description: p.description, price: p.price, category: p.category, restaurant: p.restaurant?._id || p.restaurant, isVeg: p.isVeg || false });
     setEditId(p._id);
     setImageFile(null);
     setImagePreview(p.imageUrl || "");
@@ -133,6 +133,19 @@ function VendorProducts() {
               <option value="">Select Restaurant</option>
               {restaurants.map((r) => <option key={r._id} value={r._id}>{r.name}</option>)}
             </select>
+              <label className="flex items-center gap-3 cursor-pointer sm:col-span-2">
+                <span className="text-sm font-medium text-gray-600">Veg Item</span>
+                <button
+                  type="button"
+                  onClick={() => setForm({ ...form, isVeg: !form.isVeg })}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${form.isVeg ? "bg-green-500" : "bg-gray-300"}`}
+                >
+                  <span className={`inline-block h-4 w-4 rounded-full bg-white shadow transition-transform ${form.isVeg ? "translate-x-6" : "translate-x-1"}`} />
+                </button>
+                <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${form.isVeg ? "bg-green-100 text-green-700" : "bg-red-100 text-red-600"}`}>
+                  {form.isVeg ? "🟢 Veg" : "🔴 Non-Veg"}
+                </span>
+              </label>
           </div>
           {msg.text && <p className={`text-sm mt-3 ${msg.type === "success" ? "text-green-600" : "text-red-500"}`}>{msg.text}</p>}
           <div className="flex gap-3 mt-5">

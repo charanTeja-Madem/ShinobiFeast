@@ -16,6 +16,8 @@ import VendorOrders from './pages/vendor/VendorOrders'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminUsers from './pages/admin/AdminUsers'
 import AdminOrders from './pages/admin/AdminOrders'
+import AdminRestaurants from './pages/admin/AdminRestaurants'
+import AdminDeliveryPartners from './pages/admin/AdminDeliveryPartners'
 import DeliveryDashboard from './pages/delivery/DeliveryDashboard'
 import ProtectedRoute from './components/ProtectedRoute'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
@@ -73,6 +75,14 @@ function App() {
           path: 'admin/orders',
           element: <ProtectedRoute roles={['admin']}><AdminOrders /></ProtectedRoute>
         },
+          {
+            path: 'admin/restaurants',
+            element: <ProtectedRoute roles={['admin']}><AdminRestaurants /></ProtectedRoute>
+          },
+          {
+            path: 'admin/delivery',
+            element: <ProtectedRoute roles={['admin']}><AdminDeliveryPartners /></ProtectedRoute>
+          },
         // Delivery
         {
           path: 'delivery',

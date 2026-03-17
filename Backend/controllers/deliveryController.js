@@ -237,3 +237,26 @@ export const markDelivered = async (req, res) => {
     });
   }
 };
+  export const getMyProfile = async (req, res) => {
+    try {
+      const profile = await DeliveryPartner.findOne({ user: req.user.userId }).populate("user", "name email phone");
+      if (!profile) return res.status(404).json({ message: "Profile not found" });
+      res.json({ message: "Profile fetched", profile });
+    } catch (err) {
+      res.status(500).json({ message: "Internal server error" });
+    }
+  };
+  export const updateDeliveryProfile = async (req, res) => {
+    try {
+      const { vehicleType, vehicleNumber, currentLocation } = req.body;
+      const profile = await DeliveryPartner.findOneAndUpdate(
+        { user: req.user.userId },
+        { vehicleType, vehicleNumber, currentLocation },
+        { new: true, runValidators: true }
+      );
+      if (!profile) return res.status(404).json({ message: "Profile not found. Create one first." });
+      res.json({ message: "Profile updated", profile });
+    } catch (err) {
+      res.status(500).json({ message: "Internal server error" });
+    }
+  };

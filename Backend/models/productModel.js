@@ -20,6 +20,10 @@ const productSchema=new Schema({
     imageUrl:{
         type:String
     },
+        isVeg:{
+            type:Boolean,
+            default:false
+        },
     restaurant:{
         type:Schema.Types.ObjectId,
         ref:'Restaurant',

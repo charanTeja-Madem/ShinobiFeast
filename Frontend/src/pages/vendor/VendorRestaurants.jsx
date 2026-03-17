@@ -2,13 +2,13 @@ import { useState, useEffect, useRef } from "react";
 import { api } from "../../utils/api";
 
 const EMPTY_FORM = {
-  name: "", location: "", category: [], variety: [], coupons: []
+  name: "", location: "", offer: "", category: [], variety: [], coupons: []
 };
 
 const EMPTY_COUPON = { code: "", discountType: "percent", discountValue: "", minOrder: "" };
 
 const CATEGORIES = ["veg", "non-veg"];
-const VARIETIES = ["north-indian", "south-indian", "chinese", "italian"];
+const VARIETIES = ["north-indian", "south-indian", "chinese", "italian", "american", "japanese", "mexican", "fast-food", "desserts", "seafood", "street-food", "cafe", "bbq", "vegan", "pan-asian", "multi-cuisine"];
 
 function VendorRestaurants() {
   const [restaurants, setRestaurants] = useState([]);
@@ -102,7 +102,7 @@ function VendorRestaurants() {
   };
 
   const handleEdit = (r) => {
-    setForm({ name: r.name, location: r.location, category: r.category || [], variety: r.variety || [], coupons: r.coupons || [] });
+     setForm({ name: r.name, location: r.location, offer: r.offer || "", category: r.category || [], variety: r.variety || [], coupons: r.coupons || [] });
     setEditId(r._id);
     setImageFile(null);
     setImagePreview(r.image || "");
@@ -142,6 +142,7 @@ function VendorRestaurants() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Restaurant Name" className="p-3 border rounded-lg outline-none focus:ring-2 focus:ring-orange-300 text-sm" />
             <input required value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} placeholder="Location" className="p-3 border rounded-lg outline-none focus:ring-2 focus:ring-orange-300 text-sm" />
+              <input value={form.offer} onChange={(e) => setForm({ ...form, offer: e.target.value })} placeholder="Offer text (e.g. 20% off on first order)" className="p-3 border rounded-lg outline-none focus:ring-2 focus:ring-orange-300 text-sm sm:col-span-2" />
             {/* Image upload */}
             <div className="flex items-center gap-3">
               {imagePreview && <img src={imagePreview} alt="preview" className="w-12 h-12 rounded-lg object-cover border shrink-0" />}

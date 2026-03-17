@@ -176,6 +176,8 @@ function DeliveryDashboard() {
   const [profileForm, setProfileForm] = useState({ vehicleType: "bike", vehicleNumber: "" });
   const [profileMsg, setProfileMsg] = useState("");
   const [profileLoading, setProfileLoading] = useState(false);
+    const [existingProfile, setExistingProfile] = useState(null);
+    const [profileFetching, setProfileFetching] = useState(false);
   const [tab, setTab] = useState("available");
   const [upiQrOrder, setUpiQrOrder] = useState(null);
   // OTP state: { [orderId]: { value, error, verified, loading } }
@@ -229,6 +231,25 @@ function DeliveryDashboard() {
   useEffect(() => {
     if (tab === "history") fetchHistory();
   }, [tab, fetchHistory]);
+
+    useEffect(() => {
+      if (tab === "profile" && existingProfile === null) {
+        setProfileFetching(true);
+        api.get("/delivery-api/profile")
+          .then((data) => {
+            setExistingProfile(data.profile);
+            setProfileForm({
+              vehicleType: data.profile.vehicleType || "bike",
+              vehicleNumber: data.profile.vehicleNumber || "",
+              currentLocation: data.profile.currentLocation || "",
+            });
+          })
+          .catch(() => {
+            setExistingProfile(false); // false = no profile yet
+          })
+          .finally(() => setProfileFetching(false));
+      }
+    }, [tab, existingProfile]);
 
   // Auto-refresh every 15s so stale "On The Way" orders disappear once delivered
   useEffect(() => {
@@ -317,8 +338,15 @@ function DeliveryDashboard() {
     setProfileLoading(true);
     setProfileMsg("");
     try {
-      await api.post("/delivery-api/create-profile", profileForm);
-      setProfileMsg("Delivery profile created successfully!");
+        if (existingProfile) {
+          const data = await api.put("/delivery-api/profile", profileForm);
+          setExistingProfile(data.profile);
+          setProfileMsg("Profile updated successfully!");
+        } else {
+          const data = await api.post("/delivery-api/create-profile", profileForm);
+          setExistingProfile(data.profile);
+          setProfileMsg("Delivery profile created successfully!");
+        }
     } catch (err) {
       setProfileMsg(err.message);
     } finally {
@@ -540,8 +568,12 @@ function DeliveryDashboard() {
       {tab === "profile" && (
         <div className="max-w-md">
           <div className="bg-white border rounded-2xl p-6 shadow-sm">
-            <h2 className="text-lg font-bold text-gray-700 mb-5">Create Delivery Profile</h2>
-            <form onSubmit={handleCreateProfile} className="flex flex-col gap-4">
+              {profileFetching ? (
+                <div className="space-y-3">{[...Array(3)].map((_, i) => <div key={i} className="h-10 bg-gray-200 rounded-xl animate-pulse" />)}</div>
+              ) : (
+              <>
+              <h2 className="text-lg font-bold text-gray-700 mb-5">{existingProfile ? "My Delivery Profile" : "Create Delivery Profile"}</h2>
+              <form onSubmit={handleCreateProfile} className="flex flex-col gap-4">
               <div>
                 <label className="text-sm font-medium text-gray-600 mb-1 block">Vehicle Type</label>
                 <select
@@ -564,6 +596,16 @@ function DeliveryDashboard() {
                   className="w-full p-3 border rounded-xl outline-none text-sm focus:ring-2 focus:ring-orange-300"
                 />
               </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-600 mb-1 block">Current Location</label>
+                  <input
+                    type="text"
+                    value={profileForm.currentLocation || ""}
+                    onChange={(e) => setProfileForm({ ...profileForm, currentLocation: e.target.value })}
+                    placeholder="e.g. Andheri West, Mumbai"
+                    className="w-full p-3 border rounded-xl outline-none text-sm focus:ring-2 focus:ring-orange-300"
+                  />
+                </div>
               {profileMsg && (
                 <p className={`text-sm font-medium ${profileMsg.includes("success") ? "text-green-600" : "text-red-500"}`}>{profileMsg}</p>
               )}
@@ -572,9 +614,11 @@ function DeliveryDashboard() {
                 disabled={profileLoading}
                 className="bg-[#FF5C00] text-white py-3 rounded-xl font-semibold hover:bg-orange-600 transition disabled:opacity-60"
               >
-                {profileLoading ? "Saving..." : "Save Profile"}
+                  {profileLoading ? "Saving..." : existingProfile ? "Update Profile" : "Create Profile"}
               </button>
             </form>
+              </>
+              )}
           </div>
         </div>
       )}

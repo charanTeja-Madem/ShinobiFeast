@@ -32,6 +32,8 @@ function NavLinks({ role, onClose = () => {} }) {
           <NavLink to="/admin" className={cls} onClick={onClose}>Dashboard</NavLink>
           <NavLink to="/admin/users" className={cls} onClick={onClose}>Users</NavLink>
           <NavLink to="/admin/orders" className={cls} onClick={onClose}>All Orders</NavLink>
+            <NavLink to="/admin/restaurants" className={cls} onClick={onClose}>Restaurants</NavLink>
+            <NavLink to="/admin/delivery" className={cls} onClick={onClose}>Delivery Partners</NavLink>
         </>
       )}
       {role === "deliveryPartner" && (
